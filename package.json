@@ -1,0 +1,19 @@
+{
+  "name": "tr-wavr",
+  "version": "1.0.0",
+  "description": "A simple way to integrate watosn assistant and visual recognition",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "author": "JoaoPedroPP",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "ibm-watson": "^5.2.1",
+    "multer": "^1.4.2"
+  }
+}
