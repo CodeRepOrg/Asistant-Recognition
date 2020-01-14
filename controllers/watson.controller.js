@@ -29,8 +29,7 @@ exports.getWatson = (req, res) => {
 }
 
 exports.postWatson = (req, res) => {
-    console.log(req)
-    if (req.files){
+    if (req.file){
         vr.classify({
             imagesFile: new Buffer.from(req.file.buffer),
             owners: ['me'],
@@ -57,42 +56,37 @@ exports.postWatson = (req, res) => {
         })
     }
     else {
-        if (session == null) {
-            msg.createSession({
+        if (req.body.session_id) {
+            return msg.message({
                 assistantId: process.env.assistant_id,
-            }).then(sid => {
-                session = sid.result.session_id
+                sessionId: req.body.session_id,
+                input: {
+                    message_type: 'text',
+                    text: req.body.text
+                }
+            }).then(resp => {
+                res.json(resp);
+            }).catch(err => {
+                res.json(err);
+            })
+        }
+        else {
+            msg.createSession({
+                assistantId: process.env.assistant_id
+            }). then(sid => {
                 msg.message({
                     assistantId: process.env.assistant_id,
                     sessionId: sid.result.session_id,
                     input: {
                         message_type: 'text',
-                        text: req.body.input
+                        text: req.body.text
                     }
                 }).then(resp => {
+                    resp.session_id = sid.result.session_id
                     res.json(resp);
-                }).catch(error => {
-                    console.error(error);
-                    res.json(error);
+                }).catch(err => {
+                    res.json(err);
                 })
-            }).catch(erro => {
-                session = null
-                res.send(erro)
-            });
-        }
-        else {
-            msg.message({
-                assistantId: process.env.assistant_id,
-                sessionId: session,
-                input: {
-                    message_type: 'text',
-                    text: req.body.input
-                }
-            }).then(resp => {
-                res.json(resp);
-            }).catch(error => {
-                console.error(error);
-                res.json(error);
             })
         }
     }
